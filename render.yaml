@@ -1,0 +1,32 @@
+# Blueprint di Render: crea i due servizi in un colpo solo.
+# Render -> New -> Blueprint -> scegli il repository.
+services:
+  # Backend .NET 8: Render non ha un runtime .NET nativo, quindi usa Docker
+  - type: web
+    name: piloti-api
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /piloti
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+
+  # Frontend Vue: sito statico compilato da Vite
+  - type: web
+    name: piloti-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      # URL pubblico del backend, ad es. https://piloti-api.onrender.com
+      # Render lo chiede alla creazione del Blueprint (sync: false).
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

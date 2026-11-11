@@ -1,0 +1,55 @@
+@host = http://localhost:5281
+
+### 1. Tutti i piloti
+GET {{host}}/piloti
+
+### 2a. Un pilota (200, Leclerc)
+GET {{host}}/piloti/1
+
+### 2b. Pilota inesistente (404)
+GET {{host}}/piloti/99
+
+### 3. Aggiungi Hamilton (200; ripetuta -> 400)
+POST {{host}}/piloti
+Content-Type: application/json
+
+{ "id": 3, "nome": "Lewis Hamilton", "scuderia": "Ferrari", "numero": 44 }
+
+### 4. Piloti Ferrari (Leclerc e Hamilton)
+GET {{host}}/piloti/scuderia/ferrari
+
+### 5a. Nome vuoto (400)
+POST {{host}}/piloti
+Content-Type: application/json
+
+{ "id": 4, "nome": "", "scuderia": "Red Bull", "numero": 1 }
+
+### 5b. Numero fuori intervallo (400)
+POST {{host}}/piloti
+Content-Type: application/json
+
+{ "id": 4, "nome": "Max Verstappen", "scuderia": "Red Bull", "numero": 150 }
+
+### 5c. Numero già usato da Leclerc (400)
+POST {{host}}/piloti
+Content-Type: application/json
+
+{ "id": 4, "nome": "Max Verstappen", "scuderia": "Red Bull", "numero": 16 }
+
+### 6. Modifica Hamilton (200)
+PUT {{host}}/piloti
+Content-Type: application/json
+
+{ "id": 3, "nome": "Lewis Hamilton", "scuderia": "Ferrari", "numero": 45 }
+
+### 6b. Rileggi Hamilton
+GET {{host}}/piloti/3
+
+### 7. Modifica pilota inesistente (404)
+PUT {{host}}/piloti
+Content-Type: application/json
+
+{ "id": 99, "nome": "Nessuno", "scuderia": "Nessuna", "numero": 50 }
+
+### 8. Cancella Hamilton (200; ripetuta -> 404)
+DELETE {{host}}/piloti/3
